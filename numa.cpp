@@ -15,16 +15,16 @@ int main(){
   }
 
 
-  std::chrono::steady_clock::time_point begin;
-  std::chrono::steady_clock::time_point end;
+  std::chrono::high_resolution_clock::time_point begin;
+  std::chrono::high_resolution_clock::time_point end;
 #pragma omp parallel num_threads(2)
   {
 
     for(int i = 0; i < vecSize; ++i){
       if(omp_get_thread_num() == i % omp_get_num_threads()){
-	begin = std::chrono::steady_clock::now();
+	begin = std::chrono::high_resolution_clock::now();
 	std::fill(vectors[i].begin(),vectors[i].end(),13);
-	end = std::chrono::steady_clock::now();
+	end = std::chrono::high_resolution_clock::now();
 	std::cout << "Thread: " << omp_get_thread_num() << " on CPU: " << sched_getcpu() << "; Time (ms): " ;
 	std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
       }
