@@ -24,7 +24,7 @@ int main(){
 	begin = std::chrono::high_resolution_clock::now();
 	
 	//// the first thread will work on vector0 the second on vector1
-	if(omp_get_thread_num == 0){
+	if(omp_get_thread_num() == 0){
 	  std::fill(vector0.begin(),vector0.end(),4.4);
 	} else {
 	  std::fill(vector1.begin(),vector1.end(),3.3);
