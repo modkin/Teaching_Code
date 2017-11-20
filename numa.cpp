@@ -6,29 +6,36 @@
 #include <omp.h>
 
 int main(){
-  int size = 1000 * 1000 * 10;
-  int vecSize = 2;
-  std::vector< std::vector<double> >  vectors;
-  
-  for(int i = 0; i < vecSize; ++i){
-    vectors.push_back(std::vector<double>(size));
-  }
-
-
+  //variables for timing
   std::chrono::high_resolution_clock::time_point begin;
   std::chrono::high_resolution_clock::time_point end;
+  
+  //create vectors vectors
+  int size = 1000 * 1000 * 20;
+  std::vector< double >  vector0(size);
+  std::vector< double >  vector1(size);
+    
+
 #pragma omp parallel num_threads(2)
   {
-
-    for(int i = 0; i < vecSize; ++i){
-      if(omp_get_thread_num() == i % omp_get_num_threads()){
+      //// this critical section is necessary since the timing would be messed up otherwise 
+#pragma omp critical
+      {
 	begin = std::chrono::high_resolution_clock::now();
-	std::fill(vectors[i].begin(),vectors[i].end(),13);
+	
+	//// the first thread will work on vector0 the second on vector1
+	if(omp_get_thread_num == 0){
+	  std::fill(vector0.begin(),vector0.end(),4.4);
+	} else {
+	  std::fill(vector1.begin(),vector1.end(),3.3);
+	}
+	
 	end = std::chrono::high_resolution_clock::now();
+	
 	std::cout << "Thread: " << omp_get_thread_num() << " on CPU: " << sched_getcpu() << "; Time (ms): " ;
 	std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() <<std::endl;
-      }
-#pragma omp barrier
-    } 
-  }
+	
+    }   
+  } 
 }
+
